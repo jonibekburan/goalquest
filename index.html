@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GoalQuest 🎯</title>
+
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial;background:#f4f6fb;color:#182033}
+header{background:white;padding:18px;display:flex;justify-content:space-between}
+.logo{font-size:24px;font-weight:bold}
+.xp{background:#fff0b8;padding:8px 12px;border-radius:20px}
+main{max-width:800px;margin:25px auto;padding:15px}
+.hero,.goal{background:white;padding:20px;border-radius:18px;margin-bottom:18px}
+button{border:0;border-radius:10px;padding:11px 15px;font-weight:bold}
+.add{background:#5865f2;color:white}
+.progress{height:12px;background:#e5e8ef;border-radius:20px;margin:12px 0}
+.bar{height:100%;background:#5865f2;border-radius:20px}
+.task{margin:10px 0}
+.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:20px}
+.box{background:white;padding:22px;border-radius:20px;width:100%;max-width:500px}
+input,textarea,select{width:100%;padding:12px;margin:7px 0 15px;border:1px solid #ccc;border-radius:10px}
+</style>
+</head>
+
+<body>
+
+<header>
+<div class="logo">🎯 GoalQuest</div>
+<div class="xp">⭐ <span id="xp">0</span> XP</div>
+</header>
+
+<main>
+
+<div class="hero">
+<h1>Turn problems into progress.</h1>
+<p>Set a goal, choose a deadline and build your streak.</p>
+
+<button class="add" onclick="openModal()">+ Add Goal</button>
+
+<p>🔥 Streak: <b id="streak">0</b> days</p>
+<p>🏆 Goals completed: <b id="done">0</b></p>
+</div>
+
+<div id="goals"></div>
+
+</main>
+
+<div class="modal" id="modal">
+<div class="box">
+
+<h2>Create your goal 🎯</h2>
+
+<label>Goal</label>
+<input id="title" placeholder="Example: Finish my math project">
+
+<label>Why?</label>
+<textarea id="reason" placeholder="Why do you want to complete it?"></textarea>
+
+<label>Deadline</label>
+<input id="deadline" type="datetime-local">
+
+<label>Sticker</label>
+<select id="sticker">
+<option>🎯</option>
+<option>📚</option>
+<option>💪</option>
+<option>🔥</option>
+<option>🚀</option>
+<option>💰</option>
+<option>🏆</option>
+<option>🎮</option>
+<option>🧠</option>
+</select>
+
+<label>Tasks — one per line</label>
+<textarea id="tasks" placeholder="Research&#10;Write draft&#10;Proofread"></textarea>
+
+<button onclick="createGoal()">Create Goal</button>
+<button onclick="closeModal()">Cancel</button>
+
+</div>
+</div>
+
+<script>
+
+let goals=JSON.parse(localStorage.getItem("goals")||"[]");
+let xp=+localStorage.getItem("xp")||0;
+let streak=+localStorage.getItem("streak")||0;
+
+function save(){
+localStorage.setItem("goals",JSON.stringify(goals));
+localStorage.setItem("xp",xp);
+localStorage.setItem("streak",streak);
+}
+
+function openModal(){
+document.getElementById("modal").style.display="flex";
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+function createGoal(){
+
+let title=document.getElementById("title").value.trim();
+let reason=document.getElementById("reason").value.trim();
+let deadline=document.getElementById("deadline").value;
+let sticker=document.getElementById("sticker").value;
+let text=document.getElementById("tasks").value.trim();
+
+if(!title||!deadline){
+alert("Add a goal and deadline!");
+return;
+}
+
+let tasks=text
+?text.split("\n")
+:[title];
+
+goals.push({
+id:Date.now(),
+title,
+reason,
+deadline,
+sticker,
+tasks:tasks.map(x=>({text:x,done:false})),
+completed:false
+});
+
+save();
+closeModal();
+render();
+}
+
+function toggle(id,index){
+
+let g=goals.find(x=>x.id===id);
+let task=g.tasks[index];
+
+task.done=!task.done;
+
+if(task.done) xp+=10;
+else xp=Math.max(0,xp-10);
+
+let all=g.tasks.every(x=>x.done);
+
+if(all&&!g.completed){
+g.completed=true;
+xp+=50;
+streak++;
+}
+
+if(!all&&g.completed){
+g.completed=false;
+streak=Math.max(0,streak-1);
+}
+
+save();
+render();
+}
+
+function removeGoal(id){
+
+goals=goals.filter(x=>x.id!==id);
+
+save();
+render();
+}
+
+function render(){
+
+let container=document.getElementById("goals");
+container.innerHTML="";
+
+let completedGoals=0;
+
+goals.forEach(g=>{
+
+let completed=g.tasks.filter(x=>x.done).length;
+let percent=Math.round(completed/g.tasks.length*100);
+
+if(g.completed)completedGoals++;
+
+let div=document.createElement("div");
+div.className="goal";
+
+div.innerHTML=`
+
+<h2>${g.sticker} ${g.title}</h2>
+
+<p>${g.reason}</p>
+
+<p>⏰ Deadline:
+${new Date(g.deadline).toLocaleString()}</p>
+
+<div class="progress">
+<div class="bar" style="width:${percent}%"></div>
+</div>
+
+<b>${percent}% complete</b>
+
+<div>
+${g.tasks.map((t,i)=>`
+
+<div class="task">
+<input type="checkbox"
+${t.done?"checked
