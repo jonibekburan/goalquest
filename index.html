@@ -2,209 +2,1303 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#5b5ff0">
+<meta name="description" content="GoalQuest — turn problems into progress.">
+
 <title>GoalQuest 🎯</title>
 
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial;background:#f4f6fb;color:#182033}
-header{background:white;padding:18px;display:flex;justify-content:space-between}
-.logo{font-size:24px;font-weight:bold}
-.xp{background:#fff0b8;padding:8px 12px;border-radius:20px}
-main{max-width:800px;margin:25px auto;padding:15px}
-.hero,.goal{background:white;padding:20px;border-radius:18px;margin-bottom:18px}
-button{border:0;border-radius:10px;padding:11px 15px;font-weight:bold}
-.add{background:#5865f2;color:white}
-.progress{height:12px;background:#e5e8ef;border-radius:20px;margin:12px 0}
-.bar{height:100%;background:#5865f2;border-radius:20px}
-.task{margin:10px 0}
-.modal{display:none;position:fixed;inset:0;background:#0008;align-items:center;justify-content:center;padding:20px}
-.box{background:white;padding:22px;border-radius:20px;width:100%;max-width:500px}
-input,textarea,select{width:100%;padding:12px;margin:7px 0 15px;border:1px solid #ccc;border-radius:10px}
+:root{
+  --bg:#f4f5fb;
+  --card:#ffffff;
+  --text:#171a2b;
+  --muted:#70758a;
+  --primary:#5b5ff0;
+  --primary2:#7679ff;
+  --border:#e8e9f2;
+  --success:#21b573;
+  --danger:#ef5350;
+  --shadow:0 12px 35px rgba(30,35,80,.09);
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+body{
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+}
+
+button,input,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+  border:0;
+}
+
+.app{
+  max-width:1050px;
+  margin:auto;
+  padding:20px;
+}
+
+/* HEADER */
+
+header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:25px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:25px;
+  font-weight:850;
+}
+
+.logo span{
+  font-size:30px;
+}
+
+.header-actions{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.xp{
+  background:#fff1b8;
+  padding:11px 17px;
+  border-radius:30px;
+  font-weight:800;
+}
+
+.icon-btn{
+  width:43px;
+  height:43px;
+  border-radius:14px;
+  background:var(--card);
+  box-shadow:var(--shadow);
+  font-size:20px;
+}
+
+/* HERO */
+
+.hero{
+  background:linear-gradient(135deg,#ffffff,#eef0ff);
+  border-radius:30px;
+  padding:45px;
+  box-shadow:var(--shadow);
+  margin-bottom:25px;
+}
+
+.hero h1{
+  font-size:clamp(38px,6vw,65px);
+  line-height:1;
+  max-width:700px;
+  margin-bottom:20px;
+  letter-spacing:-2px;
+}
+
+.hero p{
+  font-size:19px;
+  color:var(--muted);
+  margin-bottom:28px;
+}
+
+.primary{
+  background:linear-gradient(135deg,var(--primary),var(--primary2));
+  color:white;
+  padding:14px 21px;
+  border-radius:15px;
+  font-weight:800;
+  box-shadow:0 8px 20px rgba(91,95,240,.25);
+  transition:.2s;
+}
+
+.primary:hover{
+  transform:translateY(-2px);
+}
+
+/* STATS */
+
+.stats{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:15px;
+  margin-bottom:25px;
+}
+
+.stat{
+  background:var(--card);
+  padding:20px;
+  border-radius:22px;
+  box-shadow:var(--shadow);
+}
+
+.stat-icon{
+  font-size:25px;
+}
+
+.stat-number{
+  font-size:28px;
+  font-weight:850;
+  margin-top:8px;
+}
+
+.stat-label{
+  color:var(--muted);
+  font-size:14px;
+}
+
+/* TOOLBAR */
+
+.toolbar{
+  display:flex;
+  gap:12px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+
+.search{
+  flex:1;
+  min-width:220px;
+  padding:14px 17px;
+  border:1px solid var(--border);
+  border-radius:15px;
+  background:var(--card);
+  outline:none;
+}
+
+.filters{
+  display:flex;
+  gap:7px;
+}
+
+.filter{
+  padding:11px 15px;
+  border-radius:12px;
+  background:var(--card);
+  color:var(--muted);
+}
+
+.filter.active{
+  background:var(--primary);
+  color:white;
+}
+
+/* GOALS */
+
+.goals{
+  display:grid;
+  gap:18px;
+}
+
+.goal{
+  background:var(--card);
+  border-radius:24px;
+  padding:23px;
+  box-shadow:var(--shadow);
+  border:1px solid transparent;
+}
+
+.goal.completed{
+  border-color:#bcebd5;
+}
+
+.goal-top{
+  display:flex;
+  justify-content:space-between;
+  gap:15px;
+}
+
+.goal-title{
+  font-size:23px;
+  font-weight:850;
+}
+
+.goal-description{
+  color:var(--muted);
+  margin-top:7px;
+}
+
+.delete{
+  background:#fff0f0;
+  color:var(--danger);
+  width:38px;
+  height:38px;
+  border-radius:12px;
+}
+
+.deadline{
+  margin-top:15px;
+  color:var(--muted);
+  font-size:14px;
+}
+
+.deadline.overdue{
+  color:var(--danger);
+  font-weight:800;
+}
+
+.progress-row{
+  display:flex;
+  justify-content:space-between;
+  margin-top:20px;
+  margin-bottom:8px;
+  font-weight:800;
+}
+
+.progress{
+  height:10px;
+  background:#ececf4;
+  border-radius:20px;
+  overflow:hidden;
+}
+
+.progress-bar{
+  height:100%;
+  background:linear-gradient(90deg,var(--primary),#8a8dff);
+  border-radius:20px;
+  transition:.4s;
+}
+
+.tasks{
+  margin-top:20px;
+  display:grid;
+  gap:8px;
+}
+
+.task{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:#f7f7fb;
+  padding:11px;
+  border-radius:13px;
+}
+
+.task input{
+  width:19px;
+  height:19px;
+  accent-color:var(--primary);
+}
+
+.task.done span{
+  text-decoration:line-through;
+  color:var(--muted);
+}
+
+.empty{
+  text-align:center;
+  padding:55px 20px;
+  color:var(--muted);
+}
+
+/* MODAL */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  background:rgba(10,12,25,.55);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+  z-index:100;
+}
+
+.overlay.show{
+  display:flex;
+}
+
+.modal{
+  background:var(--card);
+  width:min(600px,100%);
+  max-height:90vh;
+  overflow:auto;
+  border-radius:27px;
+  padding:28px;
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:20px;
+}
+
+.modal h2{
+  font-size:27px;
+}
+
+.close{
+  background:#f0f0f5;
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  font-size:20px;
+}
+
+.field{
+  margin-bottom:17px;
+}
+
+.field label{
+  display:block;
+  font-weight:750;
+  margin-bottom:7px;
+}
+
+.field input,
+.field textarea{
+  width:100%;
+  padding:13px;
+  border:1px solid var(--border);
+  border-radius:13px;
+  outline:none;
+  background:var(--card);
+  color:var(--text);
+}
+
+.field textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+.task-input{
+  display:flex;
+  gap:8px;
+}
+
+.task-input button{
+  background:var(--primary);
+  color:white;
+  padding:0 17px;
+  border-radius:12px;
+}
+
+.task-list{
+  display:grid;
+  gap:7px;
+  margin-top:10px;
+}
+
+.task-preview{
+  display:flex;
+  justify-content:space-between;
+  background:#f5f5fa;
+  padding:10px 12px;
+  border-radius:11px;
+}
+
+.task-preview button{
+  background:none;
+  color:var(--danger);
+}
+
+/* TOAST */
+
+.toast{
+  position:fixed;
+  bottom:25px;
+  left:50%;
+  transform:translate(-50%,120px);
+  background:#171a2b;
+  color:white;
+  padding:13px 20px;
+  border-radius:14px;
+  opacity:0;
+  transition:.3s;
+  z-index:200;
+}
+
+.toast.show{
+  transform:translate(-50%,0);
+  opacity:1;
+}
+
+/* DARK MODE */
+
+body.dark{
+  --bg:#10111a;
+  --card:#191b28;
+  --text:#f3f4ff;
+  --muted:#a4a7ba;
+  --border:#292c3c;
+  --shadow:0 12px 35px rgba(0,0,0,.25);
+}
+
+body.dark .hero{
+  background:linear-gradient(135deg,#191b28,#22243a);
+}
+
+body.dark .task,
+body.dark .task-preview{
+  background:#222432;
+}
+
+body.dark .search{
+  background:#191b28;
+  color:white;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+  .app{
+    padding:14px;
+  }
+
+  header{
+    margin-bottom:18px;
+  }
+
+  .logo{
+    font-size:21px;
+  }
+
+  .logo span{
+    font-size:25px;
+  }
+
+  .xp{
+    padding:9px 12px;
+    font-size:14px;
+  }
+
+  .hero{
+    padding:28px 23px;
+    border-radius:24px;
+  }
+
+  .hero h1{
+    font-size:42px;
+  }
+
+  .hero p{
+    font-size:16px;
+  }
+
+  .stats{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .stat{
+    padding:16px;
+  }
+
+  .goal{
+    padding:18px;
+  }
+}
 </style>
 </head>
 
 <body>
 
+<div class="app">
+
 <header>
-<div class="logo">🎯 GoalQuest</div>
-<div class="xp">⭐ <span id="xp">0</span> XP</div>
+  <div class="logo">
+    <span>🎯</span>
+    GoalQuest
+  </div>
+
+  <div class="header-actions">
+    <button class="icon-btn" onclick="toggleTheme()" title="Theme">
+      🌙
+    </button>
+
+    <div class="xp">
+      ⭐ <span id="xp">0</span> XP
+    </div>
+  </div>
 </header>
 
-<main>
+<section class="hero">
 
-<div class="hero">
-<h1>Turn problems into progress.</h1>
-<p>Set a goal, choose a deadline and build your streak.</p>
+  <h1>Turn problems into progress.</h1>
 
-<button class="add" onclick="openModal()">+ Add Goal</button>
+  <p>
+    Set a goal, break it into tasks, choose a deadline
+    and build your streak.
+  </p>
 
-<p>🔥 Streak: <b id="streak">0</b> days</p>
-<p>🏆 Goals completed: <b id="done">0</b></p>
+  <button class="primary" onclick="openModal()">
+    + Add Goal
+  </button>
+
+</section>
+
+<section class="stats">
+
+  <div class="stat">
+    <div class="stat-icon">🔥</div>
+    <div class="stat-number" id="streak">0</div>
+    <div class="stat-label">Day streak</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-icon">🎯</div>
+    <div class="stat-number" id="totalGoals">0</div>
+    <div class="stat-label">Total goals</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-icon">🏆</div>
+    <div class="stat-number" id="completedGoals">0</div>
+    <div class="stat-label">Completed</div>
+  </div>
+
+  <div class="stat">
+    <div class="stat-icon">⚡</div>
+    <div class="stat-number" id="level">1</div>
+    <div class="stat-label">Level</div>
+  </div>
+
+</section>
+
+<div class="toolbar">
+
+  <input
+    class="search"
+    id="search"
+    placeholder="🔎 Search your goals..."
+    oninput="render()"
+  >
+
+  <div class="filters">
+    <button class="filter active" onclick="setFilter('all',this)">
+      All
+    </button>
+
+    <button class="filter" onclick="setFilter('active',this)">
+      Active
+    </button>
+
+    <button class="filter" onclick="setFilter('completed',this)">
+      Completed
+    </button>
+  </div>
+
 </div>
 
-<div id="goals"></div>
-
-</main>
-
-<div class="modal" id="modal">
-<div class="box">
-
-<h2>Create your goal 🎯</h2>
-
-<label>Goal</label>
-<input id="title" placeholder="Example: Finish my math project">
-
-<label>Why?</label>
-<textarea id="reason" placeholder="Why do you want to complete it?"></textarea>
-
-<label>Deadline</label>
-<input id="deadline" type="datetime-local">
-
-<label>Sticker</label>
-<select id="sticker">
-<option>🎯</option>
-<option>📚</option>
-<option>💪</option>
-<option>🔥</option>
-<option>🚀</option>
-<option>💰</option>
-<option>🏆</option>
-<option>🎮</option>
-<option>🧠</option>
-</select>
-
-<label>Tasks — one per line</label>
-<textarea id="tasks" placeholder="Research&#10;Write draft&#10;Proofread"></textarea>
-
-<button onclick="createGoal()">Create Goal</button>
-<button onclick="closeModal()">Cancel</button>
+<section class="goals" id="goals"></section>
 
 </div>
+
+
+<!-- MODAL -->
+
+<div class="overlay" id="overlay">
+
+  <div class="modal">
+
+    <div class="modal-header">
+
+      <h2>🎯 Create a goal</h2>
+
+      <button class="close" onclick="closeModal()">×</button>
+
+    </div>
+
+    <div class="field">
+
+      <label>Goal name</label>
+
+      <input
+        id="goalName"
+        placeholder="Example: Improve my English"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label>Description</label>
+
+      <textarea
+        id="goalDescription"
+        placeholder="What do you want to achieve?"
+      ></textarea>
+
+    </div>
+
+    <div class="field">
+
+      <label>Deadline</label>
+
+      <input
+        type="datetime-local"
+        id="goalDeadline"
+      >
+
+    </div>
+
+    <div class="field">
+
+      <label>Tasks</label>
+
+      <div class="task-input">
+
+        <input
+          id="taskInput"
+          placeholder="Example: Read 10 pages"
+          onkeydown="if(event.key==='Enter') addTask()"
+        >
+
+        <button onclick="addTask()">Add</button>
+
+      </div>
+
+      <div class="task-list" id="taskList"></div>
+
+    </div>
+
+    <button
+      class="primary"
+      style="width:100%;margin-top:5px"
+      onclick="createGoal()"
+    >
+      🚀 Create Goal
+    </button>
+
+  </div>
+
 </div>
+
+<div class="toast" id="toast"></div>
+
 
 <script>
 
-let goals=JSON.parse(localStorage.getItem("goals")||"[]");
-let xp=+localStorage.getItem("xp")||0;
-let streak=+localStorage.getItem("streak")||0;
+let goals =
+  JSON.parse(localStorage.getItem("goalquest_goals")) || [];
+
+let xp =
+  Number(localStorage.getItem("goalquest_xp")) || 0;
+
+let streak =
+  Number(localStorage.getItem("goalquest_streak")) || 0;
+
+let filter = "all";
+
+let newTasks = [];
+
+
+/* SAVE */
 
 function save(){
-localStorage.setItem("goals",JSON.stringify(goals));
-localStorage.setItem("xp",xp);
-localStorage.setItem("streak",streak);
+
+  localStorage.setItem(
+    "goalquest_goals",
+    JSON.stringify(goals)
+  );
+
+  localStorage.setItem(
+    "goalquest_xp",
+    xp
+  );
+
+  localStorage.setItem(
+    "goalquest_streak",
+    streak
+  );
 }
 
+
+/* MODAL */
+
 function openModal(){
-document.getElementById("modal").style.display="flex";
+
+  document
+    .getElementById("overlay")
+    .classList.add("show");
+
+  newTasks = [];
+
+  document.getElementById("goalName").value = "";
+  document.getElementById("goalDescription").value = "";
+  document.getElementById("goalDeadline").value = "";
+  document.getElementById("taskInput").value = "";
+
+  renderTaskPreview();
+
 }
 
 function closeModal(){
-document.getElementById("modal").style.display="none";
+
+  document
+    .getElementById("overlay")
+    .classList.remove("show");
+
 }
+
+
+/* TASK CREATION */
+
+function addTask(){
+
+  const input =
+    document.getElementById("taskInput");
+
+  const text = input.value.trim();
+
+  if(!text) return;
+
+  newTasks.push(text);
+
+  input.value = "";
+
+  renderTaskPreview();
+
+  input.focus();
+}
+
+
+function renderTaskPreview(){
+
+  const box =
+    document.getElementById("taskList");
+
+  box.innerHTML = newTasks.map((task,index)=>`
+
+    <div class="task-preview">
+
+      <span>✓ ${escapeHTML(task)}</span>
+
+      <button onclick="removeNewTask(${index})">
+        ×
+      </button>
+
+    </div>
+
+  `).join("");
+
+}
+
+
+function removeNewTask(index){
+
+  newTasks.splice(index,1);
+
+  renderTaskPreview();
+
+}
+
+
+/* CREATE GOAL */
 
 function createGoal(){
 
-let title=document.getElementById("title").value.trim();
-let reason=document.getElementById("reason").value.trim();
-let deadline=document.getElementById("deadline").value;
-let sticker=document.getElementById("sticker").value;
-let text=document.getElementById("tasks").value.trim();
+  const name =
+    document.getElementById("goalName")
+      .value.trim();
 
-if(!title||!deadline){
-alert("Add a goal and deadline!");
-return;
+  const description =
+    document.getElementById("goalDescription")
+      .value.trim();
+
+  const deadline =
+    document.getElementById("goalDeadline")
+      .value;
+
+  if(!name){
+
+    showToast("Give your goal a name 🎯");
+
+    return;
+  }
+
+  const goal = {
+
+    id:Date.now(),
+
+    name,
+
+    description,
+
+    deadline,
+
+    created:new Date().toISOString(),
+
+    completed:false,
+
+    tasks:newTasks.map(text=>({
+
+      id:Date.now()+Math.random(),
+
+      text,
+
+      done:false
+
+    }))
+
+  };
+
+  goals.unshift(goal);
+
+  save();
+
+  closeModal();
+
+  render();
+
+  showToast("Goal created! 🚀");
+
 }
 
-let tasks=text
-?text.split("\n")
-:[title];
 
-goals.push({
-id:Date.now(),
-title,
-reason,
-deadline,
-sticker,
-tasks:tasks.map(x=>({text:x,done:false})),
-completed:false
-});
+/* TASK TOGGLE */
 
-save();
-closeModal();
-render();
+function toggleTask(goalId,taskId){
+
+  const goal =
+    goals.find(g=>g.id===goalId);
+
+  if(!goal) return;
+
+  const task =
+    goal.tasks.find(t=>t.id===taskId);
+
+  if(!task) return;
+
+  const wasDone = task.done;
+
+  task.done = !task.done;
+
+  if(!wasDone){
+
+    xp += 10;
+
+    showToast("+10 XP ⭐");
+
+  }else{
+
+    xp = Math.max(0,xp-10);
+
+  }
+
+  updateGoalStatus(goal);
+
+  save();
+
+  render();
+
 }
 
-function toggle(id,index){
 
-let g=goals.find(x=>x.id===id);
-let task=g.tasks[index];
+/* GOAL STATUS */
 
-task.done=!task.done;
+function updateGoalStatus(goal){
 
-if(task.done) xp+=10;
-else xp=Math.max(0,xp-10);
+  if(goal.tasks.length === 0){
 
-let all=g.tasks.every(x=>x.done);
+    goal.completed = false;
 
-if(all&&!g.completed){
-g.completed=true;
-xp+=50;
-streak++;
+    return;
+
+  }
+
+  const completed =
+    goal.tasks.filter(t=>t.done).length;
+
+  const isComplete =
+    completed === goal.tasks.length;
+
+  if(isComplete && !goal.completed){
+
+    goal.completed = true;
+
+    xp += 100;
+
+    streak++;
+
+    showToast("Goal completed! +100 XP 🏆");
+
+  }
+
+  if(!isComplete){
+
+    goal.completed = false;
+
+  }
+
 }
 
-if(!all&&g.completed){
-g.completed=false;
-streak=Math.max(0,streak-1);
+
+/* DELETE */
+
+function deleteGoal(id){
+
+  if(!confirm("Delete this goal?")) return;
+
+  goals =
+    goals.filter(g=>g.id!==id);
+
+  save();
+
+  render();
+
+  showToast("Goal deleted");
+
 }
 
-save();
-render();
+
+/* PROGRESS */
+
+function getProgress(goal){
+
+  if(!goal.tasks.length) return 0;
+
+  const done =
+    goal.tasks.filter(t=>t.done).length;
+
+  return Math.round(
+    done / goal.tasks.length * 100
+  );
+
 }
 
-function removeGoal(id){
 
-goals=goals.filter(x=>x.id!==id);
+/* DEADLINE */
 
-save();
-render();
+function deadlineText(goal){
+
+  if(!goal.deadline)
+    return "No deadline";
+
+  const date =
+    new Date(goal.deadline);
+
+  const now =
+    new Date();
+
+  const difference =
+    date-now;
+
+  if(difference < 0 && !goal.completed){
+
+    return "⚠️ Deadline passed";
+
+  }
+
+  return "⏰ " +
+    date.toLocaleString([],{
+      dateStyle:"medium",
+      timeStyle:"short"
+    });
+
 }
+
+
+/* RENDER */
 
 function render(){
 
-let container=document.getElementById("goals");
-container.innerHTML="";
+  document.getElementById("xp").textContent = xp;
 
-let completedGoals=0;
+  document.getElementById("totalGoals")
+    .textContent = goals.length;
 
-goals.forEach(g=>{
+  document.getElementById("completedGoals")
+    .textContent =
+      goals.filter(g=>g.completed).length;
 
-let completed=g.tasks.filter(x=>x.done).length;
-let percent=Math.round(completed/g.tasks.length*100);
+  document.getElementById("streak")
+    .textContent = streak;
 
-if(g.completed)completedGoals++;
+  document.getElementById("level")
+    .textContent =
+      Math.floor(xp/500)+1;
 
-let div=document.createElement("div");
-div.className="goal";
 
-div.innerHTML=`
+  const search =
+    document.getElementById("search")
+      .value.toLowerCase();
 
-<h2>${g.sticker} ${g.title}</h2>
+  let visible = goals.filter(goal=>{
 
-<p>${g.reason}</p>
+    const matchesSearch =
+      goal.name
+        .toLowerCase()
+        .includes(search);
 
-<p>⏰ Deadline:
-${new Date(g.deadline).toLocaleString()}</p>
+    if(!matchesSearch) return false;
 
-<div class="progress">
-<div class="bar" style="width:${percent}%"></div>
-</div>
+    if(filter==="active")
+      return !goal.completed;
 
-<b>${percent}% complete</b>
+    if(filter==="completed")
+      return goal.completed;
 
-<div>
-${g.tasks.map((t,i)=>`
+    return true;
 
-<div class="task">
-<input type="checkbox"
-${t.done?"checked
+  });
+
+
+  const container =
+    document.getElementById("goals");
+
+
+  if(!visible.length){
+
+    container.innerHTML = `
+
+      <div class="empty">
+
+        <div style="font-size:50px">🎯</div>
+
+        <h2>No goals here yet</h2>
+
+        <p>
+          Create your first goal and start your quest.
+        </p>
+
+      </div>
+
+    `;
+
+    return;
+
+  }
+
+
+  container.innerHTML =
+    visible.map(goal=>{
+
+      const progress =
+        getProgress(goal);
+
+      const deadline =
+        deadlineText(goal);
+
+      return `
+
+      <article class="goal
+        ${goal.completed ? "completed":""}">
+
+        <div class="goal-top">
+
+          <div>
+
+            <div class="goal-title">
+              ${escapeHTML(goal.name)}
+            </div>
+
+            ${
+              goal.description
+              ?
+              `<div class="goal-description">
+                ${escapeHTML(goal.description)}
+              </div>`
+              :
+              ""
+            }
+
+          </div>
+
+          <button
+            class="delete"
+            onclick="deleteGoal(${goal.id})"
+          >
+            🗑
+          </button>
+
+        </div>
+
+
+        <div class="deadline
+          ${
+            deadline.includes("passed")
+            ? "overdue"
+            : ""
+          }">
+
+          ${deadline}
+
+        </div>
+
+
+        <div class="progress-row">
+
+          <span>Progress</span>
+
+          <span>${progress}%</span>
+
+        </div>
+
+
+        <div class="progress">
+
+          <div
+            class="progress-bar"
+            style="width:${progress}%">
+          </div>
+
+        </div>
+
+
+        <div class="tasks">
+
+          ${
+            goal.tasks.length
+            ?
+            goal.tasks.map(task=>`
+
+              <label class="task
+                ${task.done ? "done":""}">
+
+                <input
+                  type="checkbox"
+                  ${
+                    task.done ? "checked" : ""
+                  }
+                  onchange="
+                    toggleTask(
+                      ${goal.id},
+                      ${task.id}
+                    )
+                  "
+                >
+
+                <span>
+                  ${escapeHTML(task.text)}
+                </span>
+
+              </label>
+
+            `).join("")
+            :
+            `<div style="
+              color:var(--muted);
+              padding:10px 0">
+              Add tasks to track progress.
+            </div>`
+          }
+
+        </div>
+
+      </article>
+
+      `;
+
+    }).join("");
+
+}
+
+
+/* FILTER */
+
+function setFilter(value,button){
+
+  filter = value;
+
+  document
+    .querySelectorAll(".filter")
+    .forEach(b=>b.classList.remove("active"));
+
+  button.classList.add("active");
+
+  render();
+
+}
+
+
+/* THEME */
+
+function toggleTheme(){
+
+  document.body.classList.toggle("dark");
+
+  localStorage.setItem(
+    "goalquest_dark",
+    document.body.classList.contains("dark")
+  );
+
+}
+
+
+/* TOAST */
+
+let toastTimer;
+
+function showToast(message){
+
+  const toast =
+    document.getElementById("toast");
+
+  toast.textContent = message;
+
+  toast.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer =
+    setTimeout(
+      ()=>toast.classList.remove("show"),
+      2200
+    );
+
+}
+
+
+/* SECURITY */
+
+function escapeHTML(text){
+
+  return text
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+
+}
+
+
+/* LOAD THEME */
+
+if(
+  localStorage.getItem("goalquest_dark")
+  === "true"
+){
+
+  document.body.classList.add("dark");
+
+}
+
+
+/* CLOSE MODAL ON BACKGROUND */
+
+document
+  .getElementById("overlay")
+  .addEventListener("click",function(e){
+
+    if(e.target === this)
+      closeModal();
+
+  });
+
+
+/* START */
+
+render();
+
+</script>
+
+</body>
+</html>
